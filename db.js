@@ -1,6 +1,8 @@
+const dotenv = require('dotenv');
+dotenv.config();
 var { MongoClient } = require('mongodb');
 var bcrypt = require('bcrypt');
-var url = 'mongodb+srv://hharis:Laptop123@cluster0.gm7jn.mongodb.net/cps88?retryWrites=true&w=majority';
+var url = process.env.MONGODB_URI;
 
 
 var db = null;

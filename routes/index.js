@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var db = require('.../db');
+var db = require('../db');
 
 router.get('/login', async function(req, res) {
   res.render('login', { title: 'Login' } );
