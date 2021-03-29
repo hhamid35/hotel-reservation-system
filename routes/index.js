@@ -23,8 +23,9 @@ function ensureLoggedIn(req, res, next) {
   if (!req.session.username) {
     res.redirect('/login');
   }
-  else {}
+  else {
     next();
+  }
 }
 
 router.use(ensureLoggedIn);
