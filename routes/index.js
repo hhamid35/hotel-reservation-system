@@ -6,7 +6,7 @@ router.get('/login', async function(req, res) {
   res.render('login', { title: 'Login' } );
 });
 
-router.post('/login', async function(reg, res) {
+router.post('/login', async function(req, res) {
   var { username, password, register } = req.body;
 
   if (register) {
@@ -31,6 +31,7 @@ function ensureLoggedIn(req, res, next) {
 router.use(ensureLoggedIn);
 
 router.get('/', async function(req, res) {
+  console.log("here");
   var { username } = req.session;
   res.render('index', { 
     username,

@@ -5,10 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 require('express-async-errors');
-require('./db');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var db = require('./db');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const { Db } = require('mongodb');
 
 var app = express();
 
@@ -21,6 +23,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  resave: false,
+  saveUninitialized: true,
+  secret: 'my secret string',
+  store: new MongoStore({ url: db.url }),
+}));
 
 app.use('/', indexRouter);
 
