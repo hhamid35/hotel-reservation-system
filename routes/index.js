@@ -130,12 +130,18 @@ router.post('/logout', async function(req, res) {
   res.redirect('/');
 });
 
+
+router.post('/search_page', async function(req, res) {
+  res.redirect('/searchRooms');
+});
+
 router.get('/searchRooms', async function(req, res) {
   res.render('searchRooms', { title: 'Room Search' } );
 });
 
 router.post('/searchRooms', async function(req, res) {
-  res.redirect('/searchRooms');
+  var { price_min, price_max, start_date, end_date } = req.body;
+  
 });
 
 
