@@ -19,7 +19,6 @@ router.post('/login', async function(req, res) {
   else {
     await db.login(username, password);
     req.session.username = username;
-    console.log(req.session.username);
     res.redirect('/');
   }
 });
@@ -49,15 +48,12 @@ router.get('/', async function(req, res) {
   var accountType = await db.getAccountType(username);
 
   if (accountType === 'Admin') {
-    console.log('Redirecting to Admin Portal');
     res.redirect('/indexAdmin');
   }
   else if (accountType === 'Manager') {
-    console.log('Redirecting to Manager Portal');
     res.redirect('/indexManager');
   }
   else if (accountType === 'Guest') {
-    console.log('Redirecting to Guest Portal');
     res.redirect('/indexGuest');
   }
   else {
@@ -67,18 +63,23 @@ router.get('/', async function(req, res) {
 
 router.get('/indexAdmin', async function(req, res) {
   var { username } = req.session;
-  console.log(username);
   var user = await db.getUser(username);
+  var requests = await db.getSystemAccessRequests();
 
   res.render('indexAdmin', {
-    title: 'Admin Portal',
-    name: user.name,
+    'title': 'Admin Portal',
+    'name': user.name,
+    'requests': requests,
   });
+});
+
+router.post('/indexAdmin', async function(req, res) {
+  await db.grantSystemAccess(req.body.grant);
+  res.redirect('/indexAdmin');
 });
 
 router.get('/indexManager', async function(req, res) {
   var { username } = req.session;
-  console.log(username);
   var user = await db.getUser(username);
 
   res.render('indexManager', {
@@ -97,6 +98,15 @@ router.get('/indexGuest', async function(req, res) {
   });
 });
 
+router.post('/indexGuest', async function(req, res) {
+  var { username } = req.session;
+
+  if (req.body.accessCode) {
+    await db.requestSystemAccess(username, req.body.accessCode);
+  }
+  res.redirect('/indexGuest');
+});
+
 router.post('/', async function(req, res) {
   var { username } = req.session;
 
@@ -109,8 +119,8 @@ router.post('/', async function(req, res) {
   res.redirect('/');
 });
 
-router.post('/logout', async function(res, req) {
-  req.session.username = '';
+router.post('/logout', async function(req, res) {
+  req.session.destroy();
   res.redirect('/');
 });
 

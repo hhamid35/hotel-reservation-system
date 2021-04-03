@@ -1,7 +1,9 @@
 const dotenv = require('dotenv');
 dotenv.config();
 var { MongoClient } = require('mongodb');
+var { ObjectId } = require('mongodb');
 var bcrypt = require('bcrypt');
+const { request } = require('express');
 var url = process.env.MONGODB_URI;
 
 
@@ -88,7 +90,7 @@ async function getAccountType(username) {
     return user.accountType;
 }
 
-async function requestSystemAccess(username, accessCode, hotleName, hotelDescription, hotelStreet, hotelCity, hotelPostalCode, hotelCountry) {
+async function requestSystemAccess(username, accessCode) {
     var conn = await connect();
     var user = await conn.collection('users').findOne({ 'account.username': username });
 
@@ -100,7 +102,8 @@ async function requestSystemAccess(username, accessCode, hotleName, hotelDescrip
 
     if (request == null) {
         await conn.collection('systemRequests').insertOne({
-            'userID': user._id,
+            'username': user.account.username,
+            'name': user.name,
             'accessCode': accessCode,
             'status': 'Pending',
         });
@@ -111,15 +114,16 @@ async function requestSystemAccess(username, accessCode, hotleName, hotelDescrip
 }
 
 async function grantSystemAccess(requestID) {
+    var o_id = ObjectId(requestID);
     var conn = await connect();
-    var request = await conn.collection('systemRequests').findOne({ requestID });
+    var request = await conn.collection('systemRequests').findOne({ '_id': o_id });
 
     if (request == null) {
         throw new Error('Request does not exist!');
     }
 
     await conn.collection('users').updateOne(
-        { '_id': request.userID },
+        { 'account.username': request.username },
         { $set: { 'accountType': 'Manager' } }
     );
 
@@ -127,6 +131,17 @@ async function grantSystemAccess(requestID) {
         { '_id': request._id },
         { $set: { 'status': 'Granted' } }
     );
+}
+
+async function getSystemAccessRequests() {
+    var conn = await connect();
+    var requests = await conn.collection('systemRequests').find({ 'status': 'Pending' }).toArray();
+
+    if (requests == null) {
+        throw new Error('No requests found');
+    }
+
+    return requests;
 }
 
 async function addListItem(username, item) {
@@ -162,13 +177,42 @@ async function deleteListItems(username, item) {
     );
 }
 
+async function createAdminUser() {
+    var conn = await connect();
+    var existingUser = await conn.collection('users').findOne({ 'account.username': 'admin' });
+
+    if (existingUser == null) {    
+        var SALT_ROUNDS = 10;
+        var passwordHash = await bcrypt.hash('admin', SALT_ROUNDS)
+        
+        await conn.collection('users').insertOne({ 
+            'name': 'admin',
+            'email': 'admin@admin.com',
+            'phone': '1111111111',
+            'accountType': 'Admin',
+            'account': {
+                'username': 'admin',
+                'passwordHash': passwordHash,
+                'status': 'Active'
+            },
+            'address': {
+                'street': '350 Victoria Street',
+                'city': 'Toronto',
+                'postalCode': 'M5B2K3',
+                'country': 'Canada'
+            }
+        });
+    }
+}
+createAdminUser();
+
 module.exports = {
     url,
     login,
     register,
     getAccountType,
     getUser,
-    getListItems,
-    addListItem,
-    deleteListItems,
+    requestSystemAccess,
+    grantSystemAccess,
+    getSystemAccessRequests,
 };
