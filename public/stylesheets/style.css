@@ -6,3 +6,12 @@ body {
 a {
   color: #00B7FF;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  padding: 5px;
+}
