@@ -133,6 +133,21 @@ async function grantSystemAccess(requestID) {
     );
 }
 
+async function rejectSystemAccess(requestID) {
+    var o_id = ObjectId(requestID);
+    var conn = await connect();
+    var request = await conn.collection('systemRequests').findOne({ '_id': o_id });
+
+    if (request == null) {
+        throw new Error('Request does not exist!');
+    }
+
+    await conn.collection('systemRequests').updateOne(
+        { '_id': request._id },
+        { $set: { 'status': 'Rejected' } }
+    );
+}
+
 async function getSystemAccessRequests() {
     var conn = await connect();
     var requests = await conn.collection('systemRequests').find({ 'status': 'Pending' }).toArray();
@@ -214,5 +229,6 @@ module.exports = {
     getUser,
     requestSystemAccess,
     grantSystemAccess,
+    rejectSystemAccess,
     getSystemAccessRequests,
 };

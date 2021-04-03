@@ -74,7 +74,13 @@ router.get('/indexAdmin', async function(req, res) {
 });
 
 router.post('/indexAdmin', async function(req, res) {
-  await db.grantSystemAccess(req.body.grant);
+  console.log(req.body);
+  if (req.body.grant) {
+    await db.grantSystemAccess(req.body.grant);
+  }
+  else if (req.body.reject) {
+    db.rejectSystemAccess(req.body.reject);
+  }
   res.redirect('/indexAdmin');
 });
 
