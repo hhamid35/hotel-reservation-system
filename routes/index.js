@@ -130,4 +130,13 @@ router.post('/logout', async function(req, res) {
   res.redirect('/');
 });
 
+router.get('/searchRooms', async function(req, res) {
+  res.render('searchRooms', { title: 'Room Search' } );
+});
+
+router.post('/searchRooms', async function(req, res) {
+  res.redirect('/searchRooms');
+});
+
+
 module.exports = router;
