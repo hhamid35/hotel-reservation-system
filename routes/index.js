@@ -6,6 +6,7 @@ router.get('/login', async function(req, res) {
   res.render('login', { title: 'Login' } );
 });
 
+
 router.get('/register', async function(req, res) {
   res.render('register', { title: 'Register' } );
 });
@@ -140,8 +141,10 @@ router.get('/searchRooms', async function(req, res) {
 });
 
 router.post('/searchRooms', async function(req, res) {
-  var { price_min, price_max, start_date, end_date } = req.body;
-  
+  var { price_min, price_max, start_date, end_date, room_num} = req.body;
+  res.render('searchRooms',{
+    rooms: await db.getRoom(room_num),
+  });
 });
 
 

@@ -191,6 +191,15 @@ async function deleteListItems(username, item) {
         }
     );
 }
+async function getRoom(roomNum) {
+    var conn = await connect();
+    var room = await conn.collection('rooms').findOne({ 'roomNumber': roomNum });
+
+    if (room == null) {
+        throw new Error('Room does not exist!');
+    }
+    return room;
+}
 
 async function createAdminUser() {
     var conn = await connect();
@@ -231,4 +240,5 @@ module.exports = {
     grantSystemAccess,
     rejectSystemAccess,
     getSystemAccessRequests,
+    getRoom
 };
