@@ -19,10 +19,11 @@
     <input name="search" value="Search Available Rooms" type="submit">
 </form>
 
-{{#each rooms}}
+{{#each this}}
 <div>
-    <h2>{{this}}</h2>
-    <p>{{this}}</p>
+    <h2>{{roomNumber}}</h2>
+    <p>{{price}}</p>
+    <img src={{image}}>
 </div>
 {{/each}}
 
