@@ -12,18 +12,18 @@
     <label for="end_date">End Date:</label>
     <input type="date" name="end_date">
     <br>
-    <h2>Select Room#</h2>
-    <label for="room_num">NUMBER:</label>
-    <input name="room_num">
-    <br>
     <input name="search" value="Search Available Rooms" type="submit">
 </form>
 
-{{#each this}}
+{{#each rooms}}
 <div>
-    <h2>{{roomNumber}}</h2>
-    <p>{{price}}</p>
-    <img src={{image}}>
+    <form method="post">
+        <h2>{{this.roomNumber}}</h2>
+        <p>{{this.price}}</p>
+        <img src={{this.image}} alt="room">
+        <br>
+        <input name="book" value="Book Room" type="submit">
+    </form>
 </div>
 {{/each}}
 

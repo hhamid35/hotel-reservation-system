@@ -191,9 +191,13 @@ async function deleteListItems(username, item) {
         }
     );
 }
-async function getRoom(roomNum) {
+//async function getRoom(roomNum) {
+async function getRoom(price_min, price_max) {    
     var conn = await connect();
-    var room = await conn.collection('rooms').findOne({ 'roomNumber': roomNum });
+    //var room = await conn.collection('rooms').find({ 'roomNumber': roomNum }).toArray();
+    var room = await conn.collection('rooms').find({ 
+        price: { $gte: parseInt(price_min), $lte: parseInt(price_max)}
+    }).toArray();
 
     if (room == null) {
         throw new Error('Room does not exist!');

@@ -143,7 +143,8 @@ router.get('/searchRooms', async function(req, res) {
 router.post('/searchRooms', async function(req, res) {
   var { price_min, price_max, start_date, end_date, room_num} = req.body;
   res.render('searchRooms',{
-    rooms: await db.getRoom(room_num),
+    //rooms: await db.getRoom(room_num),
+    rooms: await db.getRoom(price_min, price_max),
   });
 });
 
