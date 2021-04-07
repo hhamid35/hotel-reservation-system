@@ -17,12 +17,12 @@
 
 {{#each rooms}}
 <div>
-    <form method="post">
+    <form method="post" action="/book_page">
         <h2>Room #: {{this.roomNumber}}</h2>
         <p>Room Price: ${{this.price}}</p>
         <img src={{this.image}} alt="room">
         <br>
-        <input name="book" value="Book Room" type="submit">
+        <input name="book" value="Book" type="submit">
     </form>
 </div>
 {{/each}}
