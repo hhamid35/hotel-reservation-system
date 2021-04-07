@@ -131,7 +131,6 @@ router.post('/logout', async function(req, res) {
   res.redirect('/');
 });
 
-
 router.post('/search_page', async function(req, res) {
   res.redirect('/searchRooms');
 });
@@ -147,14 +146,29 @@ router.post('/searchRooms', async function(req, res) {
   });
 });
 
-router.post('/book_page', async function(req, res) {
-  res.redirect('/bookRoom');
-});
-
-router.get('/bookRoom', async function(req, res) {
+router.post('/bookRoom', async function(req, res) {
+  console.log(req.body);
   res.render('payment', { 
-    title: 'Book Room'
-  } );
+    title: 'Book Room',
+    room_num: req.body.room_num,
+    room: (await db.getRoomByID(req.body.room_num))[0]
+  });
 });
 
+router.post('/book_tour', async function(req, res) {
+  /*
+  if(req.body.tour == "Yes"){
+    //show tours  
+  }
+  else if(req.body.tour == "No"){
+    //remove the tours
+  }*/
+  //purchase add to reservation db
+});
+/*
+router.post('/purchase', async function(req, res) {
+  var {name_on_card, creditNo, ccv } = req.body;
+  console.log(req.body);
+});
+*/
 module.exports = router;

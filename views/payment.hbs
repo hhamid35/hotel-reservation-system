@@ -1,17 +1,27 @@
 <h1>Checkout Order</h1>
-<form method="post" action="/book_tour">
-    <h2>Would You Like to Book a Tour?</h2>
-    <input name="yesTour" value="Yes" type="submit">
-    <input name="noTour" value="No" type="submit">
-</form>
+
+<h2>Total Price: ${{room.price}}</h2>
 <div>
-    <form>
-        <h3>Tour1</h3>
-        <p>Tour1 price</p>
-        <input name="bookTour" value="Book" type="submit">
+    <form method="post" action="/book_tour">
+        <h2>Would You Like to Book a Tour?</h2>
+        <input name="tour" value="Yes" type="submit">
+        <input name="tour" value="No" type="submit">
     </form>
+    <div id="tour_div" style="display: none;">
+        <form>
+            <h3>Tour1</h3>
+            <p>Tour1 price</p>
+            <input name="bookTour" value="tour1" type="submit">
+            <h3>Tour2</h3>
+            <p>Tour2 price</p>
+            <input name="bookTour" value="tour2" type="submit">
+            <h3>Tour3</h3>
+            <p>Tour3 price</p>
+            <input name="bookTour" value="tour3" type="submit">
+        </form>
+    </div>
 </div>
-<form method="post">
+<form >
     <label for="nameOnCard">Name:</label>
     <input name="nameOnCard">
     <br>

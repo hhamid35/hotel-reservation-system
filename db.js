@@ -191,6 +191,19 @@ async function deleteListItems(username, item) {
         }
     );
 }
+
+async function getRoomByID(id) {
+    var conn = await connect();
+    var room = await conn.collection('rooms').find({ roomNumber: id }).toArray();
+    
+    if (room == null) {
+        throw new Error('Room does not exist!');
+    }
+    
+    return room;
+
+}
+
 async function getRoom(price_min, price_max, start_date, end_date) {    
     
     var conn = await connect();
@@ -241,6 +254,21 @@ async function getRoom(price_min, price_max, start_date, end_date) {
     return room;
 }
 
+async function create_reservation(resNo, resDate, duration, checkin, checkout, room_id, guest_id, payment) {
+    await conn.collection('reservation').insertOne({ 
+        'reservationNumber': resNo,
+        'resrevationDate': resDate,
+        'duration': duration,
+        'CheckIn': checkin,
+        'Checkout': checkout,
+        'status': 'confirmed',
+        'notifications':'',
+        'room': room_id,
+        'guest': guest_id,
+        'payment': ''
+    });
+}
+
 async function createAdminUser() {
     var conn = await connect();
     var existingUser = await conn.collection('users').findOne({ 'account.username': 'admin' });
@@ -280,5 +308,6 @@ module.exports = {
     grantSystemAccess,
     rejectSystemAccess,
     getSystemAccessRequests,
-    getRoom
+    getRoom,
+    getRoomByID
 };
