@@ -208,8 +208,9 @@ async function getRoom(price_min, price_max, start_date, end_date) {
     
     var conn = await connect();
     
-    if((start_date=="" && end_date=="") && (price_min == "" && price_max==""))
-        return(await conn.collection('rooms').find({}).toArray());
+    if(start_date == "" && end_date == ""){
+        throw new Error('Must enter a reservation period!');
+    }
 
     if((start_date!="" && end_date!="") && (price_min == "" && price_max=="")){
         price_min=0;
@@ -230,25 +231,23 @@ async function getRoom(price_min, price_max, start_date, end_date) {
     if (room == null) {
         throw new Error('Room does not exist!');
     }
-    if(start_date != "" && end_date != ""){
-        var reservation;
-        var res_array = [];
-        for(var i = 0;i<room.length;i++){
-            reservation = await conn.collection('reservation').find({
-                'room': room[i]._id 
-            }).toArray();
-            if(reservation[0] != null)
-                res_array.push(reservation[0]);
-        }
-        if(res_array != null){
-            for(i = 0;i<res_array.length;i++){
-                var start = res_array[i].checkIn;  //x>y, x later than y
-                var end = res_array[i].checkOut; 
-                if(!((selected_start < start && selected_end < start) || (selected_start > end && selected_end > end))){       
-                    //s_start and s_end must be outside of the range
-                    room.splice(i,1);
-                }    
-            }
+    var reservation;
+    var res_array = [];
+    for(var i = 0;i<room.length;i++){
+        reservation = await conn.collection('reservation').find({
+            'room': room[i]._id 
+        }).toArray();
+        if(reservation[0] != null)
+            res_array.push(reservation[0]);
+    }
+    if(res_array != null){
+        for(i = 0;i<res_array.length;i++){
+            var start = res_array[i].checkIn;  //x>y, x later than y
+            var end = res_array[i].checkOut; 
+            if(!((selected_start < start && selected_end < start) || (selected_start > end && selected_end > end))){       
+                //s_start and s_end must be outside of the range
+                room.splice(i,1);
+            }    
         }
     }
     return room;
