@@ -1,3 +1,4 @@
+const { ObjectID } = require('bson');
 var express = require('express');
 var router = express.Router();
 var db = require('../db');
@@ -5,7 +6,6 @@ var db = require('../db');
 router.get('/login', async function(req, res) {
   res.render('login', { title: 'Login' } );
 });
-
 
 router.get('/register', async function(req, res) {
   res.render('register', { title: 'Register' } );
@@ -141,13 +141,19 @@ router.get('/searchRooms', async function(req, res) {
 
 router.post('/searchRooms', async function(req, res) {
   var { price_min, price_max, start_date, end_date} = req.body;
+  //console.log(start_date, end_date, req.session.username);
+  //await db.create_reservation(start_date, end_date, req.session);
+  req.session.checkin = new Date(start_date);
+  req.session.checkout = new Date(end_date);
+  //console.log(req.session);
   res.render('searchRooms',{
     rooms: await db.getRoom(price_min, price_max, start_date, end_date),
   });
 });
 
 router.post('/bookRoom', async function(req, res) {
-  console.log(req.body);
+  var room_id = (await db.getRoomByID(req.body.room_num))[0]._id;
+  req.session.roomID = room_id;
   res.render('payment', { 
     title: 'Book Room',
     room_num: req.body.room_num,
@@ -155,20 +161,18 @@ router.post('/bookRoom', async function(req, res) {
   });
 });
 
-router.post('/book_tour', async function(req, res) {
-  /*
-  if(req.body.tour == "Yes"){
-    //show tours  
-  }
-  else if(req.body.tour == "No"){
-    //remove the tours
-  }*/
-  //purchase add to reservation db
-});
-/*
 router.post('/purchase', async function(req, res) {
-  var {name_on_card, creditNo, ccv } = req.body;
-  console.log(req.body);
+  var {nameOnCard, ccNumber, ccv} = req.body;
+  //console.log(req.body);
+  //console.log(nameOnCard, ccNumber, ccv);
+  req.session.card_name= nameOnCard;
+  req.session.card_number= ccNumber;
+  req.session.ccv= ccv;
+  var duration = new Date(req.session.end_date) - new Date(req.session.start_date);
+  //console.log(ObjectID(req.session.roomID));
+  await db.create_reservation(new Date(), duration, req.session.checkin, req.session.checkout, req.session.roomID, req.session.username);
+
 });
-*/
+
+
 module.exports = router;

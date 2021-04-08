@@ -253,17 +253,18 @@ async function getRoom(price_min, price_max, start_date, end_date) {
     return room;
 }
 
-async function create_reservation(resNo, resDate, duration, checkin, checkout, room_id, guest_id, payment) {
+async function create_reservation(res_date, duration, checkin, checkout, roomID, guest_username) {
+    var conn = await connect();
     await conn.collection('reservation').insertOne({ 
-        'reservationNumber': resNo,
-        'resrevationDate': resDate,
+        'reservationNumber': 1,
+        'resrevationDate': res_date,
         'duration': duration,
         'CheckIn': checkin,
         'Checkout': checkout,
         'status': 'confirmed',
         'notifications':'',
-        'room': room_id,
-        'guest': guest_id,
+        'room': roomID,
+        'guest': guest_username,
         'payment': ''
     });
 }
@@ -308,5 +309,6 @@ module.exports = {
     rejectSystemAccess,
     getSystemAccessRequests,
     getRoom,
-    getRoomByID
+    getRoomByID,
+    create_reservation
 };
