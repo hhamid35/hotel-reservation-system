@@ -16,7 +16,7 @@
 </form>
 
 {{#each rooms}}
-<div>
+<div style="float:left; padding: 10px">
     <form method="post" action="/bookRoom">
         <h2>Room #: {{this.roomNumber}}</h2>
         <p>Room Price: ${{this.price}}</p>
