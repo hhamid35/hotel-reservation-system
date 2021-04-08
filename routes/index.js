@@ -162,6 +162,9 @@ router.post('/bookRoom', async function(req, res) {
 });
 
 router.post('/purchase', async function(req, res) {
+  if(req.body.cancel == "Cancel"){
+    res.redirect('/searchRooms');
+  }
   var {nameOnCard, ccNumber, ccv} = req.body;
   //console.log(req.body);
   //console.log(nameOnCard, ccNumber, ccv);
@@ -171,7 +174,8 @@ router.post('/purchase', async function(req, res) {
   var duration = new Date(req.session.end_date) - new Date(req.session.start_date);
   //console.log(ObjectID(req.session.roomID));
   await db.create_reservation(new Date(), duration, req.session.checkin, req.session.checkout, req.session.roomID, req.session.username);
-
+  console.log("Reservation Successfull!");
+  res.redirect('/indexGuest');
 });
 
 
